@@ -37,14 +37,17 @@ class ScrapeWeatherParser(HTMLParser):
         self.th_flag = False
         self.td_flag = False
         self.abbr_flag = False
+        self.td_count = 0 # This keeps track of how many tds are encountered.
 
     def handle_starttag(self, tag, attrs) :
         if tag == "tbody":
             self.tbody_flag = True
         if tag == "th":
             self.th_flag = True
+            self.td_count = 0 # Reset count to zero when a new th is encountered.
         if tag == "td":
             self.td_flag = True
+            self.td_count += 1 # Add to the counter at each td.
         if tag == "abbr":
             self.abbr_flag = True
             for name, value in attrs:
@@ -73,9 +76,23 @@ class ScrapeWeatherParser(HTMLParser):
             self.abbr_flag = False
 
     def handle_data(self, data) :
-        if self.tbody_flag and self.td_flag and self.current_date:
-            pass
+        # Trim whitespace and replace non-breaking spaces.
+        clean_data = data.strip().replace('\xa0', '')
 
+        try:
+        # Attempt to convert the cleaned data to a float.
+            temp_value = float(clean_data)
+            # If conversion succeeds and we're in the right td element.
+            # We only want the first three tds.
+            if self.tbody_flag and self.current_date and self.td_count in [1, 2, 3]:
+                if self.td_count == 1:
+                    self.weather[self.current_date]["Max"] = temp_value
+                elif self.td_count == 2:
+                    self.weather[self.current_date]["Min"] = temp_value
+                elif self.td_count == 3:
+                    self.weather[self.current_date]["Mean"] = temp_value
+        except ValueError:
+            pass # Maybe log the error later on...
 
     def get_weather(self) :
         """Returns the dictonary of the weather data."""
