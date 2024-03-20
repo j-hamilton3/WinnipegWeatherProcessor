@@ -38,9 +38,6 @@ Expand the Project Introduction to include a detailed description of what the pr
 
 
 ### Pylint Result
-************* Module scrape_weather
-scrape_weather.py:8:0: C0304: Final newline missing (missing-final-newline)
-scrape_weather.py:8:0: C0304: Final newline missing (missing-final-newline)
 ************* Module db_operations
 db_operations.py:8:0: C0304: Final newline missing (missing-final-newline)
 db_operations.py:8:0: C0304: Final newline missing (missing-final-newline)
@@ -50,3 +47,7 @@ plot_operations.py:8:0: C0304: Final newline missing (missing-final-newline)
 ************* Module weather_processor
 weather_processor.py:8:0: C0304: Final newline missing (missing-final-newline)
 weather_processor.py:8:0: C0304: Final newline missing (missing-final-newline)
+
+-----------------------------------
+Your code has been rated at 2.50/10
+
