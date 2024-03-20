@@ -60,7 +60,10 @@ class ScrapeWeatherParser(HTMLParser):
                         formatted_date = date_obj.strftime("%Y-%m-%d")
                         # Add the date as a key to the weather dictonary.
                         self.current_date = formatted_date
-                        self.weather[self.current_date] = {"daily_temps": {"Max": None, "Min": None, "Mean": None} }
+                        # Define the nested dictionary separately.
+                        daily_temps_init = {"daily_temps": {"Max": None, "Min": None, "Mean": None}}
+                        # Assign it to the current date in the weather dictionary.
+                        self.weather[self.current_date] = daily_temps_init
                     else:
                         # Reset the current_date if title is not in a correct format.
                         self.current_date = ""
@@ -110,4 +113,3 @@ weather_parser.feed(HTML)
 weather_dict = weather_parser.get_weather()
 
 print(weather_dict)
-
