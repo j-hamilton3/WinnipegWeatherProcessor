@@ -60,7 +60,7 @@ class ScrapeWeatherParser(HTMLParser):
                         formatted_date = date_obj.strftime("%Y-%m-%d")
                         # Add the date as a key to the weather dictonary.
                         self.current_date = formatted_date
-                        self.weather[self.current_date] = {"Max": None, "Min": None, "Mean": None}
+                        self.weather[self.current_date] = {"daily_temps": {"Max": None, "Min": None, "Mean": None} }
                     else:
                         # Reset the current_date if title is not in a correct format.
                         self.current_date = ""
@@ -84,13 +84,14 @@ class ScrapeWeatherParser(HTMLParser):
             temp_value = float(clean_data)
             # If conversion succeeds and we're in the right td element.
             # We only want the first three tds.
-            if self.tbody_flag and self.current_date and self.td_count in [1, 2, 3]:
+            if self.current_date and self.td_count in [1, 2, 3]:
+                temps = self.weather[self.current_date]["daily_temps"]
                 if self.td_count == 1:
-                    self.weather[self.current_date]["Max"] = temp_value
+                    temps["Max"] = temp_value
                 elif self.td_count == 2:
-                    self.weather[self.current_date]["Min"] = temp_value
+                    temps["Min"] = temp_value
                 elif self.td_count == 3:
-                    self.weather[self.current_date]["Mean"] = temp_value
+                    temps["Mean"] = temp_value
         except ValueError:
             pass # Maybe log the error later on...
 
@@ -109,3 +110,4 @@ weather_parser.feed(HTML)
 weather_dict = weather_parser.get_weather()
 
 print(weather_dict)
+
