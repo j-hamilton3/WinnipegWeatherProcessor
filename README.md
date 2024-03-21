@@ -38,6 +38,8 @@ Expand the Project Introduction to include a detailed description of what the pr
 
 
 ### Pylint Result
+************* Module scrape_weather
+scrape_weather.py:74:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
 ************* Module db_operations
 db_operations.py:8:0: C0304: Final newline missing (missing-final-newline)
 db_operations.py:8:0: C0304: Final newline missing (missing-final-newline)
@@ -49,5 +51,5 @@ weather_processor.py:8:0: C0304: Final newline missing (missing-final-newline)
 weather_processor.py:8:0: C0304: Final newline missing (missing-final-newline)
 
 -----------------------------------
-Your code has been rated at 9.17/10
+Your code has been rated at 9.03/10
 
