@@ -36,6 +36,7 @@ class DBOperations():
     def purge_data(self):
         """Deletes all the data in the DB."""
         self.cur.execute("DELETE FROM weather")
+        self.conn.commit()
         print("Data deleted from weather.")
 
     def save_data(self):
@@ -58,6 +59,11 @@ class DBOperations():
 
     def fetch_data(self):
         """Returns requested data for plotting."""
+        self.cur.execute("""SELECT sample_date, location, max_temp, min_temp, avg_temp
+                            FROM weather
+                            ORDER BY sample_date""")
+        rows = self.cur.fetchall()
+        return tuple(rows)
 
 
 # Testing
@@ -68,3 +74,4 @@ weather_data = ScrapeWeatherParser().fetch_weather_data()
 db = DBOperations(weather_data)
 db.initialize_db()
 db.save_data()
+#print(db.fetch_data()) <- to get rows tuple.
