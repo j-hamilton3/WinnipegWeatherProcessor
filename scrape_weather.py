@@ -50,15 +50,14 @@ class ScrapeWeatherParser(HTMLParser):
                         self.current_date = ""
 
     def handle_data(self, data) :
-        # Trim whitespace and replace non-breaking spaces.
-        clean_data = data.strip().replace('\xa0', '')
-
         try:
-        # Attempt to convert the cleaned data to a float.
-            temp_value = float(clean_data)
+            # Attempt to convert the cleaned data to a float.
             # If conversion succeeds and we're in the right td element.
             # We only want the first three tds.
             if self.current_date and self.td_count in [1, 2, 3]:
+                # Trim whitespace and replace non-breaking spaces.
+                clean_data = data.strip().replace('\xa0', '')
+                temp_value = float(clean_data)
                 temps = self.weather[self.current_date]["daily_temps"]
                 if self.td_count == 1:
                     temps["Max"] = temp_value
