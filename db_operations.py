@@ -8,7 +8,7 @@ Updates:
 """
 
 import sqlite3
-from scrape_weather import ScrapeWeatherParser
+from scrape_weather import fetch_weather_data
 from dbcm import DBCM
 
 class DBOperations():
@@ -66,7 +66,7 @@ class DBOperations():
 # TESTING
 if __name__ == "__main__":
     # Gets the dictionary of weather data from the external module.
-    weather_data = ScrapeWeatherParser().fetch_weather_data()
+    weather_data = fetch_weather_data()
 
     db = DBOperations()
     db.purge_data()

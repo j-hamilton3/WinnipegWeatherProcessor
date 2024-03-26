@@ -68,65 +68,65 @@ class ScrapeWeatherParser(HTMLParser):
         except ValueError:
             pass # Maybe log the error later on...
 
-    def get_previous_month(self, year, month):
-        """Return the year and month for the previous month."""
-        if month == 1:
-            return year - 1, 12
-        else:
-            return year, month - 1
+
 
     def get_weather(self) :
         """Returns the dictonary of the weather data."""
         return self.weather
 
-    def fetch_weather_data(self):
-        """Returns weather data from the current day until the earliest recorded date."""
-        weather_parser = ScrapeWeatherParser()
-        now = datetime.now()
-        current_year = now.year -26 # Change as needed for speed.
-        current_month = now.month
-        last_data_snapshot = None
-        all_weather_data = {}
+def get_previous_month(year, month):
+    """Return the year and month for the previous month."""
+    if month == 1:
+        return year - 1, 12
+    else:
+        return year, month - 1
 
-        while True:
-            # Generate the URL for the current month and year
-            url = f"http://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174" \
-                  f"&timeframe=2&StartYear=1840&EndYear={current_year}&Day=1&Year={current_year}" \
-                  f"&Month={current_month}"
-            print(f"Fetching data for {current_year}-{current_month}")
+def fetch_weather_data():
+    """Returns weather data from the current day until the earliest recorded date."""
+    weather_parser = ScrapeWeatherParser()
+    now = datetime.now()
+    current_year = now.year
+    current_month = now.month
+    last_data_snapshot = None
+    all_weather_data = {}
 
-            with urllib.request.urlopen(url) as response:
-                html = response.read().decode('utf-8')
-                # Reset the parser for a new month's data.
-                weather_parser = ScrapeWeatherParser()
-                weather_parser.feed(html)
+    while True:
+        # Generate the URL for the current month and year
+        url = f"http://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174" \
+                f"&timeframe=2&StartYear=1840&EndYear={current_year}&Day=1&Year={current_year}" \
+                f"&Month={current_month}"
+        print(f"Fetching data for {current_year}-{current_month}")
 
-            current_weather = weather_parser.get_weather()
+        with urllib.request.urlopen(url) as response:
+            html = response.read().decode('utf-8')
+            # Reset the parser for a new month's data.
+            weather_parser = ScrapeWeatherParser()
+            weather_parser.feed(html)
 
-            # Proceed if no data for the current month or if it's the first iteration.
-            if not current_weather:
-                print(f"No data for {current_year}-{current_month}," \
-                      f"continuing to previous month...")
-            # Stop if we have data and it's identical to the last snapshot (and not empty).
-            elif current_weather == last_data_snapshot and current_weather:
-                print("Duplicate non-empty data found, stopping...")
-                break
-            else:
-                # Update the last data snapshot for the next iteration's comparison.
-                last_data_snapshot = current_weather
-                # Add the current months data to the collection.
-                all_weather_data.update(current_weather)
+        current_weather = weather_parser.get_weather()
 
-            # Update to the previous month
-            current_year, current_month = self.get_previous_month(current_year, current_month)
+        # Proceed if no data for the current month or if it's the first iteration.
+        if not current_weather:
+            print(f"No data for {current_year}-{current_month}," \
+                    f"continuing to previous month...")
+        # Stop if we have data and it's identical to the last snapshot (and not empty).
+        elif current_weather == last_data_snapshot and current_weather:
+            print("Duplicate non-empty data found, stopping...")
+            break
+        else:
+            # Update the last data snapshot for the next iteration's comparison.
+            last_data_snapshot = current_weather
+            # Add the current months data to the collection.
+            all_weather_data.update(current_weather)
 
-        return all_weather_data # Return all weather data.
+        # Update to the previous month
+        current_year, current_month = get_previous_month(current_year, current_month)
+
+    return all_weather_data # Return all weather data.
 
 # TESTING
 if __name__ == "__main__":
     # Instantiating and using the parser.
-    weather_scraper = ScrapeWeatherParser()
-
-    weather_data = weather_scraper.fetch_weather_data()
+    weather_data = fetch_weather_data()
 
     print(weather_data)
