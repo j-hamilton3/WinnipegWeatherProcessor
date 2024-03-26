@@ -3,6 +3,6 @@ Description:
 Author:
 Section Number:
 Date Created:
-Credit: 
+Credit:
 Updates:
 """
