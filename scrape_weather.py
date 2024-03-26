@@ -84,7 +84,7 @@ class ScrapeWeatherParser(HTMLParser):
         """Returns weather data from the current day until the earliest recorded date."""
         weather_parser = ScrapeWeatherParser()
         now = datetime.now()
-        current_year = now.year # Change as needed for speed.
+        current_year = now.year -26 # Change as needed for speed.
         current_month = now.month
         last_data_snapshot = None
         all_weather_data = {}
@@ -123,9 +123,10 @@ class ScrapeWeatherParser(HTMLParser):
 
         return all_weather_data # Return all weather data.
 
-# Instantiating and using the parser.
-weather_scraper = ScrapeWeatherParser()
+if __name__ == "__main__":
+    # Instantiating and using the parser.
+    weather_scraper = ScrapeWeatherParser()
 
-weather_data = weather_scraper.fetch_weather_data()
+    weather_data = weather_scraper.fetch_weather_data()
 
-print(weather_data)
+    print(weather_data)
