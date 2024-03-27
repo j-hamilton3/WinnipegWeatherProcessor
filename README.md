@@ -41,12 +41,13 @@ Expand the Project Introduction to include a detailed description of what the pr
 ************* Module scrape_weather
 scrape_weather.py:79:4: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
 ************* Module plot_operations
-plot_operations.py:8:0: C0304: Final newline missing (missing-final-newline)
-plot_operations.py:8:0: C0304: Final newline missing (missing-final-newline)
+plot_operations.py:33:0: C0305: Trailing newlines (trailing-newlines)
+plot_operations.py:10:0: E0401: Unable to import 'matplotlib.pyplot' (import-error)
+plot_operations.py:10:0: W0611: Unused matplotlib.pyplot imported as plt (unused-import)
 ************* Module weather_processor
 weather_processor.py:8:0: C0304: Final newline missing (missing-final-newline)
 weather_processor.py:8:0: C0304: Final newline missing (missing-final-newline)
 
 -----------------------------------
-Your code has been rated at 9.59/10
+Your code has been rated at 9.25/10
 
