@@ -16,7 +16,7 @@ data = db.fetch_data()
 
 # Date range for the boxplot.
 START_YEAR = 2000
-END_YEAR = 2002
+END_YEAR = 2017
 
 def filter_by_year(start_year, end_year, all_data):
     """Filters weather data by range of years (inclusive)."""
@@ -28,9 +28,7 @@ def filter_by_year(start_year, end_year, all_data):
     filtered_data = [record for record in all_data if start_year <= get_year(record[0]) <= end_year]
     return filtered_data
 
-# Test the filter function.
 filtered_date_data = filter_by_year(START_YEAR, END_YEAR, data)
-#print(filtered_date_data)
 
 # Convert data into a dictionary of lists.
 def convert_to_dict(to_convert):
@@ -52,5 +50,23 @@ def convert_to_dict(to_convert):
     return converted_dict
 
 # Test the convert_to_dict function.
-print(convert_to_dict(filtered_date_data))
+converted_data = convert_to_dict(filtered_date_data)
 
+def plot_temperature_boxplots(weather_data, start_year, end_year):
+    """Generates a boxplot of monthly temperature distributions."""
+    # Extract months and temperatures
+    months = list(weather_data.keys())
+    # Filter out None data.
+    temperatures = [[temp for temp in weather_data[month] if temp is not None] for month in months]
+
+    # Plotting
+    plt.figure(figsize=(10, 6))  # Adjust the figure size as necessary
+    plt.boxplot(temperatures, labels=months)
+    plt.title(f'Monthly Temperature Distribution for: {start_year} to {end_year}')
+    plt.xlabel('Month')
+    plt.ylabel('Temperature (Celsius)')
+    plt.show()
+
+
+
+plot_temperature_boxplots(converted_data, 2000, 2017)
