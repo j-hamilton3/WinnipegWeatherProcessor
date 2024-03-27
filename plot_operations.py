@@ -16,7 +16,7 @@ data = db.fetch_data()
 
 # Date range for the boxplot.
 START_YEAR = 2000
-END_YEAR = 2017
+END_YEAR = 2002
 
 def filter_by_year(start_year, end_year, all_data):
     """Filters weather data by range of years (inclusive)."""
@@ -29,5 +29,28 @@ def filter_by_year(start_year, end_year, all_data):
     return filtered_data
 
 # Test the filter function.
-print(filter_by_year(START_YEAR, END_YEAR, data))
+filtered_date_data = filter_by_year(START_YEAR, END_YEAR, data)
+#print(filtered_date_data)
+
+# Convert data into a dictionary of lists.
+def convert_to_dict(to_convert):
+    """Converts weather data to a dictionary of lists."""
+    converted_dict = {}
+
+    for record in to_convert:
+        date_str = record[0]
+        mean_temp = record[4]
+
+        # Get the month from date_str.
+        month = datetime.strptime(date_str, '%Y-%m-%d').month
+
+        if month not in converted_dict:
+            converted_dict[month] = []
+
+        converted_dict[month].append(mean_temp)
+
+    return converted_dict
+
+# Test the convert_to_dict function.
+print(convert_to_dict(filtered_date_data))
 
