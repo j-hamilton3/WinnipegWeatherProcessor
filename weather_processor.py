@@ -115,8 +115,30 @@ def display_box_plot():
     # Get the current year from datetime.
     current_year = datetime.now().year
 
-    starting_year = int(input(f"Please enter a starting year (between 1996-{current_year}): "))
-    end_year = int(input(f"Please enter an end year (between 1996-{current_year}): "))
+    valid_starting_year = False
+    valid_end_year = False
+
+    while not valid_starting_year:
+        try:
+            starting_year = int(input(f"Please enter a starting year" \
+                                      f" (between 1996-{current_year}): "))
+            if 1996 <= starting_year <= current_year:
+                valid_starting_year = True
+            else:
+                print(f"Error: Please enter a year between 1996 and {current_year}.")
+        except ValueError:
+            print("Invalid input. Please enter a valid year.")
+
+    while not valid_end_year:
+        try:
+            end_year = int(input(f"Please enter an end year (between 1996-{current_year}): "))
+            if 1996 <= end_year <= current_year and end_year >= starting_year:
+                valid_end_year = True
+            else:
+                print(f"Error: Please enter a year between 1996 and {current_year}" \
+                       f" that is not less than the starting year.")
+        except ValueError:
+            print("Invalid input. Please enter a valid year.")
 
     # Generate the plot.
     plot = PlotOperations()
@@ -133,8 +155,28 @@ def display_line_plot():
     # Get the current year from datetime.
     current_year = datetime.now().year
 
-    year = int(input(f"Please enter a year (between 1996-{current_year}): "))
-    month = int(input("Please enter a month(between 1-12): "))
+    valid_year = False
+    valid_month = False
+
+    while not valid_year:
+        try:
+            year = int(input(f"Please enter a year (between 1996-{current_year}): "))
+            if 1996 <= year <= current_year:
+                valid_year = True
+            else:
+                print(f"Error: Please enter a year between 1996 and {current_year}.")
+        except ValueError:
+            print("Invalid input. Please enter a valid year.")
+
+    while not valid_month:
+        try:
+            month = int(input("Please enter a month (between 1-12): "))
+            if 1 <= month <= 12:
+                valid_month = True
+            else:
+                print("Error: Please enter a month between 1 and 12.")
+        except ValueError:
+            print("Invalid input. Please enter a valid month.")
 
     # Generate the plot.
     plot = PlotOperations()
