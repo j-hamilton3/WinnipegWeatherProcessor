@@ -52,7 +52,7 @@ class DBOperations():
                                     VALUES (?, ?, ?, ?, ?)""",
                                     (date, location, max_temp, min_temp, mean_temp))
                 except sqlite3.IntegrityError:
-                    print(f"Data for {date} already exists.")
+                    pass
 
     def check_latest_data(self):
         """Finds the latest date of DB data for updating purposes."""
