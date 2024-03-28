@@ -45,8 +45,8 @@ plot_operations.py:10:0: E0401: Unable to import 'matplotlib.pyplot' (import-err
 ************* Module weather_processor
 weather_processor.py:10:0: E0401: Unable to import 'dateutil.relativedelta' (import-error)
 weather_processor.py:11:0: E0401: Unable to import 'hypercli' (import-error)
-weather_processor.py:32:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+weather_processor.py:33:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
 
 -----------------------------------
-Your code has been rated at 9.32/10
+Your code has been rated at 9.37/10
 
