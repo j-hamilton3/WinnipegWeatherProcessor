@@ -8,6 +8,7 @@ Updates:
 """
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from menu import Menu
 from db_operations import DBOperations
 from scrape_weather import fetch_weather_data_by_month
 
@@ -68,3 +69,19 @@ class WeatherProcessor():
     #print("There is no new data available.")
 #else:
     #weather_processor.update_data()
+
+weather = WeatherProcessor()
+
+main_menu_options = [("Update weather data.", Menu.CLOSE), \
+                     ("Download all weather data. (10+ minutes)", Menu.CLOSE), \
+                     ("Generate a box plot.", Menu.CLOSE), \
+                     ("Generate a line plot.", Menu.CLOSE), \
+                     ("Exit.", Menu.CLOSE)]
+
+main_menu = Menu (
+    message = "Welcome to James' WeatherProcessor." \
+               " \n** Explore Winnipeg's historical temperature data! **",
+    options = main_menu_options
+)
+
+main_menu.open()
