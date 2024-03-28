@@ -124,6 +124,36 @@ def fetch_weather_data():
 
     return all_weather_data # Return all weather data.
 
+def fetch_weather_data_by_month(month_list):
+    """Fetches weather data for a list of specified months."""
+    all_data = {}
+    weather_parser = ScrapeWeatherParser()
+
+    for month in month_list:
+        # Split the month string into year and month.
+        current_year, current_month = month.split('-')
+        current_year = int(current_year)
+        current_month = int(current_month)
+
+        # Generate the URL for the current month and year.
+        url = f"http://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174" \
+              f"&timeframe=2&StartYear=1840&EndYear={current_year}&Day=1&Year={current_year}" \
+              f"&Month={current_month}"
+        print(f"Fetching data for {current_year}-{current_month}")
+
+        with urllib.request.urlopen(url) as response:
+            html = response.read().decode('utf-8')
+            # Reset the parser for a new month's data.
+            weather_parser.feed(html)
+
+        current_weather = weather_parser.get_weather()
+
+        # Update the all_data dictionary with the fetched data.
+        all_data.update(current_weather)
+
+    return all_data
+
+
 # TESTING
 if __name__ == "__main__":
     # Instantiating and using the parser.
