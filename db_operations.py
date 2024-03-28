@@ -7,6 +7,7 @@ Credit:
 Updates:
 """
 
+
 import sqlite3
 from scrape_weather import fetch_weather_data
 from dbcm import DBCM
@@ -53,6 +54,14 @@ class DBOperations():
                 except sqlite3.IntegrityError:
                     print(f"Data for {date} already exists.")
 
+    def check_latest_data(self):
+        """Finds the latest date of DB data for updating purposes."""
+        with DBCM(self.db_name) as cur:
+            cur.execute("""SELECT MAX(sample_date) FROM weather""")
+            result = cur.fetchone()[0]
+
+        return result
+
     def fetch_data(self):
         """Returns requested data for plotting."""
         with DBCM(self.db_name) as cur:
@@ -74,3 +83,5 @@ if __name__ == "__main__":
 
     # Returns the data for plotting.
     print(db.fetch_data())
+
+    print("Latest data in DB: " + db.check_latest_data())
