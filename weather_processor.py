@@ -10,7 +10,8 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from hypercli import hypercli #https://github.com/HYP3R00T/hypercli
 from db_operations import DBOperations
-from scrape_weather import fetch_weather_data_by_month
+from plot_operations import PlotOperations
+from scrape_weather import fetch_weather_data_by_month, fetch_weather_data
 
 class WeatherProcessor():
     """Contains methods to facilitate user interaction with weather data."""
@@ -60,7 +61,6 @@ class WeatherProcessor():
         db = DBOperations()
         db.save_data(new_data)
 
-# TEST
 
 
 # Create instance of hypercli
@@ -69,7 +69,7 @@ cli = hypercli()
 # Configure the instance.
 cli.config["banner_text"] = "James' WeatherProcessor"
 cli.config["intro_title"] = "Explore"
-cli.config["intro_content"] = "Explore Winnipeg's History in Weather!"
+cli.config["intro_content"] = "Explore Winnipeg's Historical Mean Temperatures!"
 cli.config["show_menu_table_header"] = True
 
 # Add navigation options to the menu.
@@ -97,17 +97,48 @@ def update_weather_data():
 @cli.entry(menu="Update Weather Data.", option="Download All Weather Data. (10+ mins)")
 def all_weather_data():
     """Fetches and saves all weather data to the database."""
-    print("YOOOOOO")
+    print("Fetching weather data...")
+    weather_data = fetch_weather_data()
+    db = DBOperations()
+    db.save_data(weather_data)
+    print("Weather data successfully updated. :)")
+    print()
+    input("Press enter to exit...")
 
 @cli.entry(menu="Generate Graphs.", option="Generate a Box Plot.")
-def generate_box_plot():
+def display_box_plot():
     """Generates a box plot of weather data based on user input."""
-    print("YOOOOOO")
+    # Get the current year from datetime.
+    current_year = datetime.now().year
+
+    starting_year = int(input(f"Please enter a starting year (between 1996-{current_year}): "))
+    end_year = int(input(f"Please enter an end year (between 1996-{current_year}): "))
+
+    # Generate the plot.
+    plot = PlotOperations()
+    plot.plot_temperature_boxplots(starting_year, end_year)
+
+    print("Box plot successfully generated.")
+    print()
+    input("Press enter to exit...")
 
 @cli.entry(menu="Generate Graphs.", option="Generate a Line Graph.")
-def generate_line_graph():
+def display_line_plot():
     """Generates a line graph of weather data based on user input."""
-    print("YOOOOOO")
+    # Get the current year from datetime.
+    current_year = datetime.now().year
+
+    year = int(input(f"Please enter a year (between 1996-{current_year}): "))
+    month = int(input("Please enter a month(between 1-12): "))
+
+    # Generate the plot.
+    plot = PlotOperations()
+    plot.plot_line_plot(month, year)
+
+    print("Line plot successfully generated.")
+    print()
+    input("Press enter to exit...")
+
 
 # run the cli.
 cli.run()
