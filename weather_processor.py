@@ -16,7 +16,6 @@ from scrape_weather import fetch_weather_data_by_month, fetch_weather_data
 class WeatherProcessor():
     """Contains methods to facilitate user interaction with weather data."""
 
-
     def update_dates(self):
         """ UTILITY -> Returns months of available weather data."""
         # Grab the latest date of data from DB.
@@ -62,6 +61,8 @@ class WeatherProcessor():
         db.save_data(new_data)
 
 
+# *** I am using a third party module (hypercli) to render the menu. ***
+# *** It cannot be nested in the WeatherProcessor class due to how it is built. ***
 
 # Create instance of hypercli
 cli = hypercli()
@@ -71,11 +72,11 @@ cli.config["banner_text"] = "James' WeatherProcessor"
 cli.config["intro_title"] = "Explore"
 cli.config["intro_content"] = "Explore Winnipeg's Historical Mean Temperatures!"
 cli.config["show_menu_table_header"] = True
+cli.config["exit_message"] = "Run me again soon! :)"
 
 # Add navigation options to the menu.
 cli.link("Main Menu", "Update Weather Data.")
 cli.link("Main Menu", "Generate Graphs.")
-
 
 @cli.entry(menu="Update Weather Data.", option="Update Weather Data.")
 def update_weather_data():
@@ -88,11 +89,13 @@ def update_weather_data():
         print("There is no new data available. You are up to date!")
         print()
         input("Press enter to exit...")
+        cli.exit()
     else:
         weather_processor.update_data()
         print("Weather data successfully updated. :)")
         print()
         input("Press enter to exit...")
+        cli.exit()
 
 @cli.entry(menu="Update Weather Data.", option="Download All Weather Data. (10+ mins)")
 def all_weather_data():
@@ -104,6 +107,7 @@ def all_weather_data():
     print("Weather data successfully updated. :)")
     print()
     input("Press enter to exit...")
+    cli.exit()
 
 @cli.entry(menu="Generate Graphs.", option="Generate a Box Plot.")
 def display_box_plot():
@@ -121,6 +125,7 @@ def display_box_plot():
     print("Box plot successfully generated.")
     print()
     input("Press enter to exit...")
+    cli.exit()
 
 @cli.entry(menu="Generate Graphs.", option="Generate a Line Graph.")
 def display_line_plot():
@@ -138,7 +143,7 @@ def display_line_plot():
     print("Line plot successfully generated.")
     print()
     input("Press enter to exit...")
+    cli.exit()
 
-
-# run the cli.
+# Run the cli.
 cli.run()
