@@ -8,7 +8,7 @@ Updates:
 """
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-from menu import Menu
+from hypercli import hypercli #https://github.com/HYP3R00T/hypercli
 from db_operations import DBOperations
 from scrape_weather import fetch_weather_data_by_month
 
@@ -61,27 +61,53 @@ class WeatherProcessor():
         db.save_data(new_data)
 
 # TEST
-# Logic for seeing if data needs to be updated.
-#weather_processor = WeatherProcessor()
-#update_dates_return = weather_processor.update_dates()
 
-#if not update_dates_return :
-    #print("There is no new data available.")
-#else:
-    #weather_processor.update_data()
 
-weather = WeatherProcessor()
+# Create instance of hypercli
+cli = hypercli()
 
-main_menu_options = [("Update weather data.", Menu.CLOSE), \
-                     ("Download all weather data. (10+ minutes)", Menu.CLOSE), \
-                     ("Generate a box plot.", Menu.CLOSE), \
-                     ("Generate a line plot.", Menu.CLOSE), \
-                     ("Exit.", Menu.CLOSE)]
+# Configure the instance.
+cli.config["banner_text"] = "James' WeatherProcessor"
+cli.config["intro_title"] = "Explore"
+cli.config["intro_content"] = "Explore Winnipeg's History in Weather!"
+cli.config["show_menu_table_header"] = True
 
-main_menu = Menu (
-    message = "Welcome to James' WeatherProcessor." \
-               " \n** Explore Winnipeg's historical temperature data! **",
-    options = main_menu_options
-)
+# Add navigation options to the menu.
+cli.link("Main Menu", "Update Weather Data.")
+cli.link("Main Menu", "Generate Graphs.")
 
-main_menu.open()
+
+@cli.entry(menu="Update Weather Data.", option="Update Weather Data.")
+def update_weather_data():
+    """Updates the current missing weather data to the database."""
+    # Logic for seeing if data needs to be updated.
+    weather_processor = WeatherProcessor()
+    update_dates_return = weather_processor.update_dates()
+
+    if not update_dates_return :
+        print("There is no new data available. You are up to date!")
+        print()
+        input("Press enter to exit...")
+    else:
+        weather_processor.update_data()
+        print("Weather data successfully updated. :)")
+        print()
+        input("Press enter to exit...")
+
+@cli.entry(menu="Update Weather Data.", option="Download All Weather Data. (10+ mins)")
+def all_weather_data():
+    """Fetches and saves all weather data to the database."""
+    print("YOOOOOO")
+
+@cli.entry(menu="Generate Graphs.", option="Generate a Box Plot.")
+def generate_box_plot():
+    """Generates a box plot of weather data based on user input."""
+    print("YOOOOOO")
+
+@cli.entry(menu="Generate Graphs.", option="Generate a Line Graph.")
+def generate_line_graph():
+    """Generates a line graph of weather data based on user input."""
+    print("YOOOOOO")
+
+# run the cli.
+cli.run()
