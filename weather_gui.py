@@ -1,5 +1,5 @@
 """
-Description: Part 2 - GUI for final project.
+Description: Part 7 - GUI for final project.
 Author: James Hamilton
 Section Number: ADEV-3005, N. Cai, FTO01
 Date Created: March April 5, 2024
