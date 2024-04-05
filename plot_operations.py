@@ -64,7 +64,7 @@ class PlotOperations():
         filtered_year_data = self.filter_by_year(start_year, end_year, unfiltered_weather_data)
         #Conver to dictionary.
         weather_data = self.convert_to_dict(filtered_year_data)
-        # Extract months and temperatures
+        # Extract months and temperatures.
         months = list(weather_data.keys())
         # Filter out None data.
         temperatures = [[temp for temp in weather_data[month] if temp is not None]
@@ -82,10 +82,10 @@ class PlotOperations():
         """Generates a line plot for daily mean temperatures of a specific month and year."""
         weather_data = self.data
 
-        # Use the filter_by_month function to get data for the specified month and year
+        # Use the filter_by_month function to get data for the specified month and year.
         filtered_by_month = self.filter_by_month(month, year, weather_data)
 
-        # Extract dates and mean temperatures from the filtered data
+        # Extract dates and mean temperatures from the filtered data.
         dates = [datetime.strptime(record[0], '%Y-%m-%d').date() for record in filtered_by_month]
         mean_temperatures = [record[4] for record in filtered_by_month]
 

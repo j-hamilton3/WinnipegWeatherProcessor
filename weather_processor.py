@@ -43,7 +43,7 @@ class WeatherProcessor():
 
         while current_date <= yesterday:
             months_list.append(current_date.strftime("%Y-%m"))
-            current_date += relativedelta(months=+1)  # Increment month by one
+            current_date += relativedelta(months=+1)  # Increment month by one.
 
         return months_list # If it returns an empty list, there is no more data to update.
 
@@ -63,129 +63,129 @@ class WeatherProcessor():
 
 # *** I am using a third party module (hypercli) to render the menu. ***
 # *** It cannot be nested in the WeatherProcessor class due to how it is built. ***
+if __name__ == "__main__":
+    # Create instance of hypercli
+    cli = hypercli()
 
-# Create instance of hypercli
-cli = hypercli()
+    # Configure the instance.
+    cli.config["banner_text"] = "James' WeatherProcessor"
+    cli.config["intro_title"] = "Explore"
+    cli.config["intro_content"] = "Explore Winnipeg's Historical Mean Temperatures!"
+    cli.config["show_menu_table_header"] = True
+    cli.config["exit_message"] = "Run me again soon! :)"
 
-# Configure the instance.
-cli.config["banner_text"] = "James' WeatherProcessor"
-cli.config["intro_title"] = "Explore"
-cli.config["intro_content"] = "Explore Winnipeg's Historical Mean Temperatures!"
-cli.config["show_menu_table_header"] = True
-cli.config["exit_message"] = "Run me again soon! :)"
+    # Add navigation options to the menu.
+    cli.link("Main Menu", "Update Weather Data.")
+    cli.link("Main Menu", "Generate Graphs.")
 
-# Add navigation options to the menu.
-cli.link("Main Menu", "Update Weather Data.")
-cli.link("Main Menu", "Generate Graphs.")
+    @cli.entry(menu="Update Weather Data.", option="Update Weather Data.")
+    def update_weather_data():
+        """Updates the current missing weather data to the database."""
+        # Logic for seeing if data needs to be updated.
+        weather_processor = WeatherProcessor()
+        update_dates_return = weather_processor.update_dates()
 
-@cli.entry(menu="Update Weather Data.", option="Update Weather Data.")
-def update_weather_data():
-    """Updates the current missing weather data to the database."""
-    # Logic for seeing if data needs to be updated.
-    weather_processor = WeatherProcessor()
-    update_dates_return = weather_processor.update_dates()
+        if not update_dates_return :
+            print("There is no new data available. You are up to date!")
+            print()
+            input("Press enter to exit...")
+            cli.exit()
+        else:
+            weather_processor.update_data()
+            print("Weather data successfully updated. :)")
+            print()
+            input("Press enter to exit...")
+            cli.exit()
 
-    if not update_dates_return :
-        print("There is no new data available. You are up to date!")
-        print()
-        input("Press enter to exit...")
-        cli.exit()
-    else:
-        weather_processor.update_data()
+    @cli.entry(menu="Update Weather Data.", option="Download All Weather Data. (10+ mins)")
+    def all_weather_data():
+        """Fetches and saves all weather data to the database."""
+        print("Fetching weather data...")
+        weather_data = fetch_weather_data()
+        db = DBOperations()
+        db.save_data(weather_data)
         print("Weather data successfully updated. :)")
         print()
         input("Press enter to exit...")
         cli.exit()
 
-@cli.entry(menu="Update Weather Data.", option="Download All Weather Data. (10+ mins)")
-def all_weather_data():
-    """Fetches and saves all weather data to the database."""
-    print("Fetching weather data...")
-    weather_data = fetch_weather_data()
-    db = DBOperations()
-    db.save_data(weather_data)
-    print("Weather data successfully updated. :)")
-    print()
-    input("Press enter to exit...")
-    cli.exit()
+    @cli.entry(menu="Generate Graphs.", option="Generate a Box Plot.")
+    def display_box_plot():
+        """Generates a box plot of weather data based on user input."""
+        # Get the current year from datetime.
+        current_year = datetime.now().year
 
-@cli.entry(menu="Generate Graphs.", option="Generate a Box Plot.")
-def display_box_plot():
-    """Generates a box plot of weather data based on user input."""
-    # Get the current year from datetime.
-    current_year = datetime.now().year
+        valid_starting_year = False
+        valid_end_year = False
 
-    valid_starting_year = False
-    valid_end_year = False
+        while not valid_starting_year:
+            try:
+                starting_year = int(input(f"Please enter a starting year" \
+                                        f" (between 1996-{current_year}): "))
+                if 1996 <= starting_year <= current_year:
+                    valid_starting_year = True
+                else:
+                    print(f"Error: Please enter a year between 1996 and {current_year}.")
+            except ValueError:
+                print("Invalid input. Please enter a valid year.")
 
-    while not valid_starting_year:
-        try:
-            starting_year = int(input(f"Please enter a starting year" \
-                                      f" (between 1996-{current_year}): "))
-            if 1996 <= starting_year <= current_year:
-                valid_starting_year = True
-            else:
-                print(f"Error: Please enter a year between 1996 and {current_year}.")
-        except ValueError:
-            print("Invalid input. Please enter a valid year.")
+        while not valid_end_year:
+            try:
+                end_year = int(input(f"Please enter an end year (between 1996-{current_year}): "))
+                if 1996 <= end_year <= current_year and end_year >= starting_year:
+                    valid_end_year = True
+                else:
+                    print(f"Error: Please enter a year between 1996 and {current_year}" \
+                        f" that is not less than the starting year.")
+            except ValueError:
+                print("Invalid input. Please enter a valid year.")
 
-    while not valid_end_year:
-        try:
-            end_year = int(input(f"Please enter an end year (between 1996-{current_year}): "))
-            if 1996 <= end_year <= current_year and end_year >= starting_year:
-                valid_end_year = True
-            else:
-                print(f"Error: Please enter a year between 1996 and {current_year}" \
-                       f" that is not less than the starting year.")
-        except ValueError:
-            print("Invalid input. Please enter a valid year.")
+        # Generate the plot.
+        plot = PlotOperations()
+        plot.plot_temperature_boxplots(starting_year, end_year)
 
-    # Generate the plot.
-    plot = PlotOperations()
-    plot.plot_temperature_boxplots(starting_year, end_year)
+        print("Box plot successfully generated.")
+        print()
+        input("Press enter to exit...")
+        cli.exit()
 
-    print("Box plot successfully generated.")
-    print()
-    input("Press enter to exit...")
-    cli.exit()
+    @cli.entry(menu="Generate Graphs.", option="Generate a Line Graph.")
+    def display_line_plot():
+        """Generates a line graph of weather data based on user input."""
+        # Get the current year from datetime.
+        current_year = datetime.now().year
 
-@cli.entry(menu="Generate Graphs.", option="Generate a Line Graph.")
-def display_line_plot():
-    """Generates a line graph of weather data based on user input."""
-    # Get the current year from datetime.
-    current_year = datetime.now().year
+        valid_year = False
+        valid_month = False
 
-    valid_year = False
-    valid_month = False
+        while not valid_year:
+            try:
+                year = int(input(f"Please enter a year (between 1996-{current_year}): "))
+                if 1996 <= year <= current_year:
+                    valid_year = True
+                else:
+                    print(f"Error: Please enter a year between 1996 and {current_year}.")
+            except ValueError:
+                print("Invalid input. Please enter a valid year.")
 
-    while not valid_year:
-        try:
-            year = int(input(f"Please enter a year (between 1996-{current_year}): "))
-            if 1996 <= year <= current_year:
-                valid_year = True
-            else:
-                print(f"Error: Please enter a year between 1996 and {current_year}.")
-        except ValueError:
-            print("Invalid input. Please enter a valid year.")
+        while not valid_month:
+            try:
+                month = int(input("Please enter a month (between 1-12): "))
+                if 1 <= month <= 12:
+                    valid_month = True
+                else:
+                    print("Error: Please enter a month between 1 and 12.")
+            except ValueError:
+                print("Invalid input. Please enter a valid month.")
 
-    while not valid_month:
-        try:
-            month = int(input("Please enter a month (between 1-12): "))
-            if 1 <= month <= 12:
-                valid_month = True
-            else:
-                print("Error: Please enter a month between 1 and 12.")
-        except ValueError:
-            print("Invalid input. Please enter a valid month.")
+        # Generate the plot.
+        plot = PlotOperations()
+        plot.plot_line_plot(month, year)
 
-    # Generate the plot.
-    plot = PlotOperations()
-    plot.plot_line_plot(month, year)
+        print("Line plot successfully generated.")
+        print()
+        input("Press enter to exit...")
+        cli.exit()
 
-    print("Line plot successfully generated.")
-    print()
-    input("Press enter to exit...")
-    cli.exit()
-
-# Run the cli.
-cli.run()
+    # Run the cli.
+    cli.run()
