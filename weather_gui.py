@@ -7,9 +7,10 @@ Credit:
 Updates:
 """
 import tkinter
-from tkinter import Button, Label
-from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
+from tkinter import Button, Label, messagebox, StringVar
+from tkinter.simpledialog import askstring
+import threading
+from datetime import datetime
 from plot_operations import PlotOperations
 from weather_processor import WeatherProcessor
 from scrape_weather import fetch_weather_data
@@ -17,101 +18,99 @@ from db_operations import DBOperations
 
 def update_weather_data():
     """Updates the current missing weather data to the database."""
-    # Logic for seeing if data needs to be updated.
     weather_processor = WeatherProcessor()
     update_dates_return = weather_processor.update_dates()
 
-    if not update_dates_return :
-        print("There is no new data available. You are up to date!")
-        print()
-        input("Press enter to exit...")
+    if not update_dates_return:
+        messagebox.showinfo("Update Status", "There is no new data available. You are up to date!")
     else:
         weather_processor.update_data()
-        print("Weather data successfully updated. :)")
-        print()
-        input("Press enter to exit...")
+        messagebox.showinfo("Update Status", "Weather data successfully updated. :)")
 
 def all_weather_data():
-    """Fetches and saves all weather data to the database."""
-    print("Fetching weather data...")
+    """Starts the process of fetching and saving all weather data in a separate thread."""
+    all_weather_data_button.config(state='disabled')  # Disable the button.
+    threading.Thread(target=all_weather_data_thread).start()
+
+def all_weather_data_thread():
+    """Fetches and saves all weather data to the database in a background thread."""
+    # Notify the user that the process has started.
+    update_status.set("Fetching weather data... This will take 10+ minutes.")
     weather_data = fetch_weather_data()
     db = DBOperations()
     db.save_data(weather_data)
-    print("Weather data successfully updated. :)")
-    print()
-    input("Press enter to exit...")
+    # Update the status once the task is complete.
+    messagebox.showinfo("Update Status", "Weather data successfully updated. :)")
+    all_weather_data_button.config(state='normal') # Re enable the button.
+    update_status.set("")
 
+def get_year_input(title, message, start_year=1996):
+    """Custom dialog to get year input."""
+    while True:
+        input_year = askstring(title, message)
+        if input_year is None:
+            return None
+        try:
+            year = int(input_year)
+            if start_year <= year <= datetime.now().year:
+                return year
+            else:
+                messagebox.showerror("Invalid Year",
+                                     f"Please enter a year between" \
+                                     f" {start_year} and {datetime.now().year}.")
+        except ValueError:
+            messagebox.showerror("Invalid Input", "Please enter a valid year.")
 
 def display_box_plot():
     """Generates a box plot of weather data based on user input."""
-    # Get the current year from datetime.
-    current_year = datetime.now().year
+    starting_year = get_year_input("Starting Year", f"Please enter a starting year" \
+                                    f" (between 1996-{datetime.now().year}):")
+    if starting_year is None:
+        return
 
-    valid_starting_year = False
-    valid_end_year = False
+    end_year = get_year_input("End Year",
+                              f"Please enter an end year" \
+                              f" (between {starting_year}-{datetime.now().year}):",
+                              starting_year)
+    if end_year is None:
+        return
 
-    while not valid_starting_year:
-        try:
-            starting_year = int(input(f"Please enter a starting year" \
-                                    f" (between 1996-{current_year}): "))
-            if 1996 <= starting_year <= current_year:
-                valid_starting_year = True
-            else:
-                print(f"Error: Please enter a year between 1996 and {current_year}.")
-        except ValueError:
-            print("Invalid input. Please enter a valid year.")
-
-    while not valid_end_year:
-        try:
-            end_year = int(input(f"Please enter an end year (between 1996-{current_year}): "))
-            if 1996 <= end_year <= current_year and end_year >= starting_year:
-                valid_end_year = True
-            else:
-                print(f"Error: Please enter a year between 1996 and {current_year}" \
-                    f" that is not less than the starting year.")
-        except ValueError:
-            print("Invalid input. Please enter a valid year.")
-
-    # Generate the plot.
     plot = PlotOperations()
     plot.plot_temperature_boxplots(starting_year, end_year)
 
-    print("Box plot successfully generated.")
-    print()
-    input("Press enter to exit...")
-
 def display_line_plot():
     """Generates a line graph of weather data based on user input."""
-    # Get the current year from datetime.
-    current_year = datetime.now().year
+    year = get_year_input("Select Year",
+                          f"Please enter a year (between 1996-{datetime.now().year}):")
+    if year is None:
+        return  # User cancelled
 
-    valid_year = False
-    valid_month = False
+    month = askstring("Select Month", "Please enter a month (between 1-12):")
+    if month is None:
+        return  # User cancelled
 
-    while not valid_year:
-        try:
-            year = int(input(f"Please enter a year (between 1996-{current_year}): "))
-            if 1996 <= year <= current_year:
-                valid_year = True
-            else:
-                print(f"Error: Please enter a year between 1996 and {current_year}.")
-        except ValueError:
-            print("Invalid input. Please enter a valid year.")
+    try:
+        month = int(month)
+        if not 1 <= month <= 12:
+            raise ValueError
 
-    while not valid_month:
-        try:
-            month = int(input("Please enter a month (between 1-12): "))
-            if 1 <= month <= 12:
-                valid_month = True
-            else:
-                print("Error: Please enter a month between 1 and 12.")
-        except ValueError:
-            print("Invalid input. Please enter a valid month.")
+        # Generate the plot.
+        plot = PlotOperations()
+        plot.plot_line_plot(month, year)
+    except ValueError:
+        messagebox.showerror("Invalid Input", "Please enter a valid month.")
+
 
 app = tkinter.Tk()
 app.geometry("500x500") # Give the window a fixed size.
 app.resizable(0, 0)
 app.title("Winnipeg Weather Processor")
+
+update_status = StringVar(app)
+update_status.set("")
+
+status_label = Label(app, textvariable=update_status, font=("Helvetica", 10))
+status_label.place(x=90, y=450)
 
 # Main title header.
 main_title_header = Label(app, text="Winnipeg Weather Processor", font=("Helvetica", 18, "bold"))
