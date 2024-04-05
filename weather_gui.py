@@ -7,7 +7,7 @@ Credit:
 Updates:
 """
 import tkinter
-from tkinter import Button
+from tkinter import Button, Label
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from plot_operations import PlotOperations
@@ -111,21 +111,40 @@ def display_line_plot():
 app = tkinter.Tk()
 app.geometry("500x500") # Give the window a fixed size.
 app.resizable(0, 0)
+app.title("Winnipeg Weather Processor")
 
-# Add widgets here.***
-update_weather_button = Button(app, text="Update Weather Data", command="update_weather_data")
-update_weather_button.place(x=75, y=100)
+# Main title header.
+main_title_header = Label(app, text="Winnipeg Weather Processor", font=("Helvetica", 18, "bold"))
+main_title_header.place(x=75, y=10)
 
-all_weather_data_button = Button(app, text="Get All Weather Data (15+ mins.)",
-                                 command="all_weather_data")
-all_weather_data_button.place(x=250, y=100)
+# Headers
+get_weather_data_header = Label(app, text="Get Weather Data", font=("Helvetica", 16))
+get_weather_data_header.place(x=150, y=100)
 
-display_box_plot_button = Button(app, text="Generate Box Plot", command="display_box_plot")
-display_box_plot_button.place(x=75, y=350)
-
-display_line_plot_button = Button(app, text="Generate Line Graph", command="display_line_plot")
-display_line_plot_button.place(x=250, y=350)
+get_weather_data_subheader = Label(app, text="Import scraped data from climate.weather.gc.ca.",
+                                   font=("Helvetica", 10))
+get_weather_data_subheader.place(x=90, y=130)
 
 
+generate_graphs_header = Label(app, text="Generate Graphs", font=("Helvetica", 16))
+generate_graphs_header.place(x=150, y=300)
+
+generate_graphs_subheader = Label(app, text="Create graphs from historical weather data.",
+                                  font=("Helvetica", 10))
+generate_graphs_subheader.place(x=110, y=330)
+
+# Buttons
+update_weather_button = Button(app, text="Update Weather Data", command=update_weather_data)
+update_weather_button.place(x=100, y=170)
+
+all_weather_data_button = Button(app, text="Get All Weather Data",
+                                 command=all_weather_data)
+all_weather_data_button.place(x=250, y=170)
+
+display_box_plot_button = Button(app, text="Generate Box Plot", command=display_box_plot)
+display_box_plot_button.place(x=100, y=370)
+
+display_line_plot_button = Button(app, text="Generate Line Graph", command=display_line_plot)
+display_line_plot_button.place(x=250, y=370)
 
 app.mainloop()
