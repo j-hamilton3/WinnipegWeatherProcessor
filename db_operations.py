@@ -16,7 +16,7 @@ class DBOperations():
     """Defines various database functions."""
 
     def __init__(self):
-        self.db_name = "weather.sqlite"
+        self.db_name = r"C:\Program Files (x86)\Winnipeg Weather Processor\weather.sqlite"
 
         self.initialize_db() # Runs everytime!
 

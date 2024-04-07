@@ -25,6 +25,8 @@ def update_weather_data():
         messagebox.showinfo("Update Status", "There is no new data available. You are up to date!")
     else:
         weather_processor.update_data()
+        print("Weather data successfully updated. :)")
+        print()
         messagebox.showinfo("Update Status", "Weather data successfully updated. :)")
 
 def all_weather_data():
@@ -40,6 +42,8 @@ def all_weather_data_thread():
     db = DBOperations()
     db.save_data(weather_data)
     # Update the status once the task is complete.
+    print("Weather data successfully updated. :)")
+    print()
     messagebox.showinfo("Update Status", "Weather data successfully updated. :)")
     all_weather_data_button.config(state='normal') # Re enable the button.
     update_status.set("")
@@ -100,7 +104,12 @@ def display_line_plot():
     except ValueError:
         messagebox.showerror("Invalid Input", "Please enter a valid month.")
 
+# Print welcome message to the console.
+print("Welcome to James' Winnipeg Weather Processor!")
+print("Please keep this window open to view data fetching progress.")
+print("************************************************************")
 
+# Launch the GUI.
 app = tkinter.Tk()
 app.geometry("500x500") # Give the window a fixed size.
 app.resizable(0, 0)
