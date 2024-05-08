@@ -1,15 +1,9 @@
 """
-Description: A Weather Scraper created for Milestone 1.
+Description: A web scraper used to gather Winnipeg weather data.
 Author: James Hamilton
-Section Number: ADEV-3005, N. Cai, FTO01
 Date Created: March 20th, 2024
-Credit:
-     OpenAI. (2024). ChatGPT (April 2023 version) [Large language model].
-     This work was supported in part by assistance from ChatGPT,
-     an AI language model developed by OpenAI.  https://chat.openai.com/chat
-     This AI was used to generate ideas, and help format logic. No code was copy-pasted.
-Updates:
 """
+
 from datetime import datetime
 from html.parser import HTMLParser
 import urllib.request
